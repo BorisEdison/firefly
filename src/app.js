@@ -1,14 +1,10 @@
 const express = require("express");
+const routes = require("./routes/index");
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Server is running",
-  });
-});
+app.use("/", routes);
 
 module.exports = app;
