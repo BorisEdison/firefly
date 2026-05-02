@@ -56,4 +56,5 @@ export const appConfig = {
   nodeEnv: getNodeEnv(),
   port: getNumberEnv("PORT", APP_CONSTANTS.DEFAULT_PORT),
   mongoUri: getStringEnv("MONGO_URI", true, en.DATABASE.MONGO_URI_REQUIRED),
+  baseUrl: getStringEnv("BASE_URL", true, en.URL.BASE_URL_REQUIRED),
 };
