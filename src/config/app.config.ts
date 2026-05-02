@@ -1,5 +1,20 @@
 import { APP_CONSTANTS } from "../constants/app.constants.js";
 import { ENodeEnv } from "../enums/node-env.enum.js";
+import { en } from "../locales/en.js";
+
+const getStringEnv = (
+  key: string,
+  required = false,
+  requiredMessage = `${key} is required`,
+) => {
+  const value = process.env[key];
+
+  if (!value && required) {
+    throw new Error(requiredMessage);
+  }
+
+  return value || "";
+};
 
 const getNumberEnv = (key: string, defaultValue: number): number => {
   const value = process.env[key];
@@ -40,4 +55,5 @@ const getNodeEnv = (): ENodeEnv => {
 export const appConfig = {
   nodeEnv: getNodeEnv(),
   port: getNumberEnv("PORT", APP_CONSTANTS.DEFAULT_PORT),
+  mongoUri: getStringEnv("MONGO_URI", true, en.DATABASE.MONGO_URI_REQUIRED),
 };
