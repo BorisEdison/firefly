@@ -4,6 +4,7 @@ import { EHttpStatusCode } from "../enums/http-status.enum.js";
 import {
   ICreateShortUrlRequestBody,
   ICreateShortUrlResponse,
+  IRedirectUrlResponse,
 } from "../interfaces/url-api.interface.js";
 import { en } from "../locales/en.js";
 import { UrlModel } from "../models/url.model.js";
@@ -46,6 +47,26 @@ const createShortUrl = async (
   };
 };
 
+const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
+  const url = await UrlModel.findOne({ shortId });
+
+  if (!url) {
+    throw new AppError(en.URL.NOT_FOUND, EHttpStatusCode.NOT_FOUND);
+  }
+
+  if (url.expiresAt && url.expiresAt < new Date()) {
+    throw new AppError(en.URL.EXPIRED, EHttpStatusCode.GONE);
+  }
+
+  url.clicks += 1;
+  await url.save();
+
+  return {
+    originalUrl: url.originalUrl,
+  };
+};
+
 export const urlService = {
   createShortUrl,
+  redirectUrl,
 };

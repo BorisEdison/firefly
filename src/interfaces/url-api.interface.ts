@@ -8,3 +8,7 @@ export interface ICreateShortUrlResponse {
   shortId: string;
   originalUrl: string;
 }
+
+export interface IRedirectUrlResponse {
+  originalUrl: string;
+}

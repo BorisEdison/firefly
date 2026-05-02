@@ -11,7 +11,9 @@ export const en = {
     CREATED: "Short URL created successfully",
     INVALID_ORIGINAL_URL: "A valid URL is required",
     CUSTOM_ALIAS_ALREADY_EXISTS: "Custom alias already exists",
-    BASE_URL_REQUIRED: "BASE_URL is required"
+    BASE_URL_REQUIRED: "BASE_URL is required",
+    NOT_FOUND: "Short URL not found",
+    EXPIRED: "Short URL has expired",
   },
   ROUTE: {
     NOT_FOUND: "Route not found",
