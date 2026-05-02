@@ -3,6 +3,7 @@ import { error } from "node:console";
 import { EHttpStatusCode } from "../enums/http-status.enum.js";
 import { en } from "../locales/en.js";
 import { IApiResponse } from "../interfaces/api-response.interface.js";
+import { AppError } from "../utils/app-error.js";
 
 const errorMiddleware: ErrorRequestHandler = (
   err: Error,
@@ -11,6 +12,15 @@ const errorMiddleware: ErrorRequestHandler = (
   _next: NextFunction,
 ): void => {
   console.log("[ERROR]", err);
+
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+    });
+
+    return;
+  }
 
   res.status(EHttpStatusCode.INTERNAL_SERVER_ERROR).json({
     success: false,
