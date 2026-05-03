@@ -5,7 +5,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Server",
-      "program": "${workspaceFolder}/src/server.js",
+      "program": "${workspaceFolder}/dist/server.js",
       "envFile": "${workspaceFolder}/.env",
       "runtimeArgs": ["--nolazy"],
       "console": "integratedTerminal"

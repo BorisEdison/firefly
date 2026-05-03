@@ -12,6 +12,11 @@ export const en = {
     ANALYTICS_FETCHED: "URL analytics fetched successfully",
     INVALID_ORIGINAL_URL: "A valid URL is required",
     CUSTOM_ALIAS_ALREADY_EXISTS: "Custom alias already exists",
+    CUSTOM_ALIAS_INVALID:
+      "Custom alias can only contain letters, numbers, hyphens, and underscores",
+    CUSTOM_ALIAS_LENGTH_INVALID:
+      "Custom alias must be between 3 and 30 characters",
+    CUSTOM_ALIAS_RESERVED: "This custom alias is reserved",
     BASE_URL_REQUIRED: "BASE_URL is required",
     NOT_FOUND: "Short URL not found",
     EXPIRED: "Short URL has expired",

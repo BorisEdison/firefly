@@ -1,5 +1,5 @@
 import { appConfig } from "../config/app.config.js";
-import { SHORT_ID_LENGTH } from "../constants/constants.js";
+import { URL_CONSTANTS } from "../constants/url.constants.js";
 import { EHttpStatusCode } from "../enums/http-status.enum.js";
 import {
   ICreateShortUrlRequestBody,
@@ -10,8 +10,40 @@ import {
 import { en } from "../locales/en.js";
 import { UrlModel } from "../models/url.model.js";
 import { AppError } from "../utils/app-error.js";
+import {
+  isReservedCustomAlias,
+  isValidCustomAlias,
+  isValidCustomAliasLength,
+} from "../utils/custom-alias-validator.util.js";
 import { generateShortId } from "../utils/short-id.util.js";
 import { isValidUrl } from "../utils/url-validator.js";
+
+const validateCustomAlias = (customAlias?: string): void => {
+  if (!customAlias) {
+    return;
+  }
+
+  if (!isValidCustomAliasLength(customAlias)) {
+    throw new AppError(
+      en.URL.CUSTOM_ALIAS_LENGTH_INVALID,
+      EHttpStatusCode.BAD_REQUEST,
+    );
+  }
+
+  if (!isValidCustomAlias(customAlias)) {
+    throw new AppError(
+      en.URL.CUSTOM_ALIAS_INVALID,
+      EHttpStatusCode.BAD_REQUEST,
+    );
+  }
+
+  if (isReservedCustomAlias(customAlias)) {
+    throw new AppError(
+      en.URL.CUSTOM_ALIAS_RESERVED,
+      EHttpStatusCode.BAD_REQUEST,
+    );
+  }
+};
 
 const createShortUrl = async (
   payload: ICreateShortUrlRequestBody,
@@ -25,7 +57,11 @@ const createShortUrl = async (
     );
   }
 
-  const shortId = customAlias || generateShortId(SHORT_ID_LENGTH);
+  console.log("hello");
+  validateCustomAlias(customAlias);
+
+  console.log("afterValidation");
+  const shortId = customAlias || generateShortId(URL_CONSTANTS.SHORT_ID_LENGTH);
 
   const existingUrl = await UrlModel.findOne({ shortId });
 
