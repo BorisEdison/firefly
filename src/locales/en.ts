@@ -17,6 +17,8 @@ export const en = {
     CUSTOM_ALIAS_LENGTH_INVALID:
       "Custom alias must be between 3 and 30 characters",
     CUSTOM_ALIAS_RESERVED: "This custom alias is reserved",
+    INVALID_EXPIRY_DATE: "Expiry date must be a valid date",
+    EXPIRY_DATE_IN_PAST: "Expiry date must be in the future",
     BASE_URL_REQUIRED: "BASE_URL is required",
     NOT_FOUND: "Short URL not found",
     EXPIRED: "Short URL has expired",

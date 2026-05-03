@@ -15,6 +15,7 @@ import {
   isValidCustomAlias,
   isValidCustomAliasLength,
 } from "../utils/custom-alias-validator.util.js";
+import { isFutureDate, parseFutureDate } from "../utils/date-validator.util.js";
 import { generateShortId } from "../utils/short-id.util.js";
 import { isValidUrl } from "../utils/url-validator.js";
 
@@ -45,10 +46,28 @@ const validateCustomAlias = (customAlias?: string): void => {
   }
 };
 
+const validateAndParseExpiryDate = (expiresAt?: string): Date | undefined => {
+  if (!expiresAt) {
+    return undefined;
+  }
+
+  const parseExpiryDate = parseFutureDate(expiresAt);
+
+  if (!parseExpiryDate) {
+    throw new AppError(en.URL.INVALID_EXPIRY_DATE, EHttpStatusCode.BAD_REQUEST);
+  }
+
+  if (!isFutureDate(parseExpiryDate)) {
+    throw new AppError(en.URL.EXPIRY_DATE_IN_PAST, EHttpStatusCode.BAD_REQUEST);
+  }
+
+  return parseExpiryDate;
+};
+
 const createShortUrl = async (
   payload: ICreateShortUrlRequestBody,
 ): Promise<ICreateShortUrlResponse> => {
-  const { url, customAlias } = payload;
+  const { url, customAlias, expiresAt } = payload;
 
   if (!url || !isValidUrl(url)) {
     throw new AppError(
@@ -57,10 +76,10 @@ const createShortUrl = async (
     );
   }
 
-  console.log("hello");
   validateCustomAlias(customAlias);
 
-  console.log("afterValidation");
+  const parsedExpiryDate = validateAndParseExpiryDate(expiresAt);
+
   const shortId = customAlias || generateShortId(URL_CONSTANTS.SHORT_ID_LENGTH);
 
   const existingUrl = await UrlModel.findOne({ shortId });
@@ -75,12 +94,14 @@ const createShortUrl = async (
   const createdUrl = await UrlModel.create({
     shortId,
     originalUrl: url,
+    expiresAt: parsedExpiryDate,
   });
 
   return {
     shortUrl: `${appConfig.baseUrl}/${createdUrl.shortId}`,
     shortId: createdUrl.shortId,
     originalUrl: createdUrl.originalUrl,
+    expiresAt: createdUrl.expiresAt,
   };
 };
 
@@ -133,6 +154,7 @@ const getUrlAnalytics = async (
     shortUrl: `${appConfig.baseUrl}/${url.shortId}`,
     originalUrl: url.originalUrl,
     clicks: url.clicks,
+    expiresAt: url.expiresAt,
     createdAt: url.createdAt,
   };
 };

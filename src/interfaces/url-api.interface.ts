@@ -1,12 +1,16 @@
+import { strict } from "node:assert";
+
 export interface ICreateShortUrlRequestBody {
   url: string;
   customAlias?: string;
+  expiresAt?: string;
 }
 
 export interface ICreateShortUrlResponse {
   shortUrl: string;
   shortId: string;
   originalUrl: string;
+  expiresAt?: Date;
 }
 
 export interface IRedirectUrlResponse {
@@ -19,4 +23,5 @@ export interface IUrlAnalyticsResponse {
   originalUrl: string;
   clicks: number;
   createdAt: Date;
+  expiresAt?: Date;
 }
