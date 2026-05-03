@@ -48,19 +48,35 @@ const createShortUrl = async (
   };
 };
 
+// find URL only if:
+// - it has no expiry
+// OR
+// - expiry is in the future
+const getActiveUrlFilter = (shortId: string) => ({
+  shortId,
+  $or: [{ expiresAt: { $exists: false } }, { expiresAt: { $gt: new Date() } }],
+});
+
 const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
-  const url = await UrlModel.findOne({ shortId });
+  const url = await UrlModel.findOneAndUpdate(
+    getActiveUrlFilter(shortId),
+    {
+      $inc: { clicks: 1 },
+    },
+    {
+      new: true, // return the document with the incremented clicks count
+    },
+  );
 
   if (!url) {
+    const existingUrl = await UrlModel.findOne({ shortId });
+
+    if (existingUrl?.expiresAt && existingUrl.expiresAt <= new Date()) {
+      throw new AppError(en.URL.EXPIRED, EHttpStatusCode.GONE);
+    }
+
     throw new AppError(en.URL.NOT_FOUND, EHttpStatusCode.NOT_FOUND);
   }
-
-  if (url.expiresAt && url.expiresAt < new Date()) {
-    throw new AppError(en.URL.EXPIRED, EHttpStatusCode.GONE);
-  }
-
-  url.clicks += 1;
-  await url.save();
 
   return {
     originalUrl: url.originalUrl,
