@@ -5,6 +5,7 @@ import {
   ICreateShortUrlRequestBody,
   ICreateShortUrlResponse,
   IRedirectUrlResponse,
+  IUrlAnalyticsResponse,
 } from "../interfaces/url-api.interface.js";
 import { en } from "../locales/en.js";
 import { UrlModel } from "../models/url.model.js";
@@ -66,7 +67,26 @@ const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
   };
 };
 
+const getUrlAnalytics = async (
+  shortId: string,
+): Promise<IUrlAnalyticsResponse> => {
+  const url = await UrlModel.findOne({ shortId });
+
+  if (!url) {
+    throw new AppError(en.URL.NOT_FOUND, EHttpStatusCode.NOT_FOUND);
+  }
+
+  return {
+    shortId: url.shortId,
+    shortUrl: `${appConfig.baseUrl}/${url.shortId}`,
+    originalUrl: url.originalUrl,
+    clicks: url.clicks,
+    createdAt: url.createdAt,
+  };
+};
+
 export const urlService = {
   createShortUrl,
   redirectUrl,
+  getUrlAnalytics,
 };

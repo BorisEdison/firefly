@@ -27,7 +27,23 @@ const redirectUrl = asyncHandler(
   },
 );
 
+const getUrlAnalytics = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { shortId } = req.params;
+
+    // ! will have to remove this ts assertion
+    const result = await urlService.getUrlAnalytics(shortId as string);
+
+    res.status(EHttpStatusCode.OK).json({
+      success: true,
+      message: en.URL.ANALYTICS_FETCHED,
+      data: result,
+    });
+  },
+);
+
 export const urlController = {
   createShortUrl,
   redirectUrl,
+  getUrlAnalytics,
 };

@@ -9,6 +9,7 @@ export const en = {
   },
   URL: {
     CREATED: "Short URL created successfully",
+    ANALYTICS_FETCHED: "URL analytics fetched successfully",
     INVALID_ORIGINAL_URL: "A valid URL is required",
     CUSTOM_ALIAS_ALREADY_EXISTS: "Custom alias already exists",
     BASE_URL_REQUIRED: "BASE_URL is required",

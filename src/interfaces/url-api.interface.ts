@@ -12,3 +12,11 @@ export interface ICreateShortUrlResponse {
 export interface IRedirectUrlResponse {
   originalUrl: string;
 }
+
+export interface IUrlAnalyticsResponse {
+  shortId: string;
+  shortUrl: string;
+  originalUrl: string;
+  clicks: number;
+  createdAt: Date;
+}
