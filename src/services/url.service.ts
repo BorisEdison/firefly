@@ -10,75 +10,13 @@ import {
 import { en } from "../locales/en.js";
 import { UrlModel } from "../models/url.model.js";
 import { AppError } from "../utils/app-error.js";
-import {
-  isReservedCustomAlias,
-  isValidCustomAlias,
-  isValidCustomAliasLength,
-} from "../utils/custom-alias-validator.util.js";
-import { isFutureDate, parseFutureDate } from "../utils/date-validator.util.js";
+
 import { generateShortId } from "../utils/short-id.util.js";
-import { isValidUrl } from "../utils/url-validator.js";
-
-const validateCustomAlias = (customAlias?: string): void => {
-  if (!customAlias) {
-    return;
-  }
-
-  if (!isValidCustomAliasLength(customAlias)) {
-    throw new AppError(
-      en.URL.CUSTOM_ALIAS_LENGTH_INVALID,
-      EHttpStatusCode.BAD_REQUEST,
-    );
-  }
-
-  if (!isValidCustomAlias(customAlias)) {
-    throw new AppError(
-      en.URL.CUSTOM_ALIAS_INVALID,
-      EHttpStatusCode.BAD_REQUEST,
-    );
-  }
-
-  if (isReservedCustomAlias(customAlias)) {
-    throw new AppError(
-      en.URL.CUSTOM_ALIAS_RESERVED,
-      EHttpStatusCode.BAD_REQUEST,
-    );
-  }
-};
-
-const validateAndParseExpiryDate = (expiresAt?: string): Date | undefined => {
-  if (!expiresAt) {
-    return undefined;
-  }
-
-  const parseExpiryDate = parseFutureDate(expiresAt);
-
-  if (!parseExpiryDate) {
-    throw new AppError(en.URL.INVALID_EXPIRY_DATE, EHttpStatusCode.BAD_REQUEST);
-  }
-
-  if (!isFutureDate(parseExpiryDate)) {
-    throw new AppError(en.URL.EXPIRY_DATE_IN_PAST, EHttpStatusCode.BAD_REQUEST);
-  }
-
-  return parseExpiryDate;
-};
 
 const createShortUrl = async (
   payload: ICreateShortUrlRequestBody,
 ): Promise<ICreateShortUrlResponse> => {
   const { url, customAlias, expiresAt } = payload;
-
-  if (!url || !isValidUrl(url)) {
-    throw new AppError(
-      en.URL.INVALID_ORIGINAL_URL,
-      EHttpStatusCode.BAD_REQUEST,
-    );
-  }
-
-  validateCustomAlias(customAlias);
-
-  const parsedExpiryDate = validateAndParseExpiryDate(expiresAt);
 
   const shortId = customAlias || generateShortId(URL_CONSTANTS.SHORT_ID_LENGTH);
 
@@ -94,7 +32,7 @@ const createShortUrl = async (
   const createdUrl = await UrlModel.create({
     shortId,
     originalUrl: url,
-    expiresAt: parsedExpiryDate,
+    expiresAt: expiresAt ? new Date(expiresAt) : undefined,
   });
 
   return {
