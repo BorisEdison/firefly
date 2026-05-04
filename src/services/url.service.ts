@@ -13,21 +13,44 @@ import { AppError } from "../utils/app-error.js";
 
 import { generateShortId } from "../utils/short-id.util.js";
 
+const generateUniqueShortId = async (): Promise<string> => {
+  for (
+    let attempt = 1;
+    attempt <= URL_CONSTANTS.SHORT_ID_GENERATION_MAX_ATTEMPTS;
+    attempt += 1
+  ) {
+    const shortId = generateShortId(URL_CONSTANTS.SHORT_ID_LENGTH);
+
+    const existingUrl = await UrlModel.exists({ shortId });
+
+    if (!existingUrl) {
+      return shortId;
+    }
+  }
+
+  throw new AppError(
+    en.URL.SHORT_ID_GENERATION_FAILED,
+    EHttpStatusCode.INTERNAL_SERVER_ERROR,
+  );
+};
+
 const createShortUrl = async (
   payload: ICreateShortUrlRequestBody,
 ): Promise<ICreateShortUrlResponse> => {
   const { url, customAlias, expiresAt } = payload;
 
-  const shortId = customAlias || generateShortId(URL_CONSTANTS.SHORT_ID_LENGTH);
+  if (customAlias) {
+    const existingUrl = await UrlModel.exists({ shortId: customAlias });
 
-  const existingUrl = await UrlModel.findOne({ shortId });
-
-  if (existingUrl) {
-    throw new AppError(
-      en.URL.CUSTOM_ALIAS_ALREADY_EXISTS,
-      EHttpStatusCode.CONFLICT,
-    );
+    if (existingUrl) {
+      throw new AppError(
+        en.URL.CUSTOM_ALIAS_ALREADY_EXISTS,
+        EHttpStatusCode.CONFLICT,
+      );
+    }
   }
+
+  const shortId = customAlias || (await generateUniqueShortId());
 
   const createdUrl = await UrlModel.create({
     shortId,
