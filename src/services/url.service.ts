@@ -10,6 +10,7 @@ import {
 import { en } from "../locales/en.js";
 import { UrlModel } from "../models/url.model.js";
 import { AppError } from "../utils/app-error.js";
+import { calculateRedirectCacheTtl } from "../utils/cache-ttl.util.js";
 
 import { generateShortId } from "../utils/short-id.util.js";
 import { cacheService } from "./cache.service.js";
@@ -101,13 +102,23 @@ const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
     const existingUrl = await UrlModel.findOne({ shortId });
 
     if (existingUrl?.expiresAt && existingUrl.expiresAt <= new Date()) {
+      await cacheService.deleteRedirectUrl(shortId);
+
       throw new AppError(en.URL.EXPIRED, EHttpStatusCode.GONE);
     }
 
     throw new AppError(en.URL.NOT_FOUND, EHttpStatusCode.NOT_FOUND);
   }
 
-  await cacheService.setRedirectUrl(shortId, url.originalUrl);
+  const redirectCacheTtl = calculateRedirectCacheTtl(url.expiresAt);
+
+  if (redirectCacheTtl > 0) {
+    await cacheService.setRedirectUrl(
+      shortId,
+      url.originalUrl,
+      redirectCacheTtl,
+    );
+  }
 
   return {
     originalUrl: url.originalUrl,
