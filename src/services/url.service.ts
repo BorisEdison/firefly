@@ -93,7 +93,7 @@ const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
       $inc: { clicks: 1 },
     },
     {
-      new: true, // return the document with the incremented clicks count
+      returnDocument: "after", // return the document after updating with the incremented clicks count
     },
   );
 
