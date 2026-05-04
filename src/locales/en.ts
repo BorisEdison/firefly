@@ -7,6 +7,13 @@ export const en = {
     CONNECTION_FAILED: "MongoDB connection failed",
     MONGO_URI_REQUIRED: "MONGO_URI is required",
   },
+
+  REDIS: {
+    CONNECTED: "Redis connected successfully",
+    CONNECTION_FAILED: "Redis connection failed. Cache will be disabled",
+    REDIS_URL_REQUIRED: "REDIS_URL is required",
+  },
+
   URL: {
     CREATED: "Short URL created successfully",
     ANALYTICS_FETCHED: "URL analytics fetched successfully",
@@ -25,9 +32,11 @@ export const en = {
     NOT_FOUND: "Short URL not found",
     EXPIRED: "Short URL has expired",
   },
+
   ROUTE: {
     NOT_FOUND: "Route not found",
   },
+  
   ERROR: {
     INTERNAL_SERVER_ERROR: "Internal server error",
   },

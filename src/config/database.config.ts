@@ -8,6 +8,7 @@ export const connectDatabase = async (): Promise<void> => {
 
     console.log(`[INFO] ${en.DATABASE.CONNECTED}`);
   } catch (error) {
-    console.log(`[ERROR] ${en.DATABASE.CONNECTION_FAILED}`);
+    console.error(`[ERROR] ${en.DATABASE.CONNECTION_FAILED}`, error);
+    process.exit(1);
   }
 };

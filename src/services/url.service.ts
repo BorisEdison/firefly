@@ -12,6 +12,7 @@ import { UrlModel } from "../models/url.model.js";
 import { AppError } from "../utils/app-error.js";
 
 import { generateShortId } from "../utils/short-id.util.js";
+import { cacheService } from "./cache.service.js";
 
 const generateUniqueShortId = async (): Promise<string> => {
   for (
@@ -76,6 +77,16 @@ const getActiveUrlFilter = (shortId: string) => ({
 });
 
 const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
+  const cachedOriginalUrl = await cacheService.getRedirectUrl(shortId);
+
+  if (cachedOriginalUrl) {
+    void UrlModel.updateOne(getActiveUrlFilter(shortId), {
+      $inc: { clicks: 1 },
+    });
+
+    return { originalUrl: cachedOriginalUrl };
+  }
+
   const url = await UrlModel.findOneAndUpdate(
     getActiveUrlFilter(shortId),
     {
@@ -95,6 +106,8 @@ const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
 
     throw new AppError(en.URL.NOT_FOUND, EHttpStatusCode.NOT_FOUND);
   }
+
+  await cacheService.setRedirectUrl(shortId, url.originalUrl);
 
   return {
     originalUrl: url.originalUrl,
