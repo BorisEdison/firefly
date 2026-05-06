@@ -1,0 +1,51 @@
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: firefly-api-dev
+    env_file:
+      - .env.docker.dev 
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - firefly-api-node-modules:/app/node_modules
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - firefly-network
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:8
+    container_name: firefly-mongodb-dev
+    ports: 
+      - "27017:27017"
+    volumes:
+      - firefly-mongo-data-dev:/data/db
+    networks:
+      - firefly-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    container_name: firefly-redis-dev
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - firefly-redis-data-dev:/data
+    networks:
+      - firefly-network
+    restart: unless-stopped
+
+networks:
+  firefly-network:
+    driver: bridge
+
+volumes:
+  firefly-api-node-modules:
+  firefly-mongo-data-dev:
+  firefly-redis-data-dev:
