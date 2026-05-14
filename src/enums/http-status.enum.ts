@@ -7,5 +7,6 @@ export enum EHttpStatusCode {
   NOT_FOUND = 404,
   CONFLICT = 409,
   GONE = 410,
+  TOO_MANY_REQUESTS = 429,
   INTERNAL_SERVER_ERROR = 500,
 }

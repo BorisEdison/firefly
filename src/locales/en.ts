@@ -36,6 +36,10 @@ export const en = {
   ROUTE: {
     NOT_FOUND: "Route not found",
   },
+
+  RATE_LIMIT: {
+    TOO_MANY_REQUESTS: "Too many requests. Please try again later"
+  },
   
   ERROR: {
     INTERNAL_SERVER_ERROR: "Internal server error",
