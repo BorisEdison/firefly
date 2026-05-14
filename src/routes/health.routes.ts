@@ -5,7 +5,7 @@ import { IApiResponse } from "../interfaces/api-response.interface.js";
 
 const router = Router();
 
-router.use("/path", (_req: Request, res: Response<IApiResponse>): void => {
+router.use("/", (_req: Request, res: Response<IApiResponse>): void => {
   res.status(EHttpStatusCode.OK).json({
     success: true,
     message: en.SERVER.RUNNING,

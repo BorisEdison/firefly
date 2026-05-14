@@ -1,0 +1,8 @@
+export const SECURITY_CONSTANTS = {
+  JSON_BODY_LIMIT: "100kb",
+
+  CORS: {
+    DEVELOPMENT_ALLOWED_ORIGINS: ["http://localhost:4321"],
+    PRODUCTION_ALLOWED_ORIGINS: [],
+  },
+};
