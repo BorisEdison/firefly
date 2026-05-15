@@ -1,7 +1,7 @@
 import rateLimit from "express-rate-limit";
 import { IApiResponse } from "../interfaces/api-response.interface.js";
 import { en } from "../locales/en.js";
-import { RATE_LIMIT_CONSTANTS } from "../constants/rate-llimit.constants.js";
+import { RATE_LIMIT_CONSTANTS } from "../constants/rate-limit.constants.js";
 import { EHttpStatusCode } from "../enums/http-status.enum.js";
 
 const createRateLimitMessage = (): IApiResponse => ({
