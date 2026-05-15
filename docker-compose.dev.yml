@@ -11,6 +11,7 @@ services:
     volumes:
       - .:/app
       - firefly-api-node-modules:/app/node_modules
+      - firefly-api-dist:/app/dist
     depends_on:
       - mongo
       - redis
@@ -47,5 +48,6 @@ networks:
 
 volumes:
   firefly-api-node-modules:
+  firefly-api-dist:
   firefly-mongo-data-dev:
   firefly-redis-data-dev:
