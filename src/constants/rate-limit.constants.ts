@@ -1,0 +1,14 @@
+export const RATE_LIMIT_CONSTANTS = {
+  GENERAL: {
+    WINDOW_MS: 15 * 60 * 1000,
+    MAX_REQUESTS: 300,
+  },
+  CREATE_SHORT_URL: {
+    WINDOW_MS: 15 * 60 * 1000,
+    MAX_REQUESTS: 30,
+  },
+  REDIRECT: {
+    WINDOW_MS: 1 * 60 * 1000,
+    MAX_REQUESTS: 120,
+  },
+};

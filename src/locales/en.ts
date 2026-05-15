@@ -6,12 +6,14 @@ export const en = {
     CONNECTED: "MongoDB connected successfully",
     CONNECTION_FAILED: "MongoDB connection failed",
     MONGO_URI_REQUIRED: "MONGO_URI is required",
+    DISCONNECTED: "MongoDB disconnected successfully",
   },
 
   REDIS: {
     CONNECTED: "Redis connected successfully",
     CONNECTION_FAILED: "Redis connection failed. Cache will be disabled",
     REDIS_URL_REQUIRED: "REDIS_URL is required",
+    DISCONNECTED: "Redis disconnected successfully",
   },
 
   URL: {
@@ -36,7 +38,11 @@ export const en = {
   ROUTE: {
     NOT_FOUND: "Route not found",
   },
-  
+
+  RATE_LIMIT: {
+    TOO_MANY_REQUESTS: "Too many requests. Please try again later",
+  },
+
   ERROR: {
     INTERNAL_SERVER_ERROR: "Internal server error",
   },
