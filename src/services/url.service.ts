@@ -13,6 +13,7 @@ import { AppError } from "../utils/app-error.js";
 import { calculateRedirectCacheTtl } from "../utils/cache-ttl.util.js";
 
 import { generateShortId } from "../utils/short-id.util.js";
+import { isExpiredDate } from "../utils/url-expiry.util.js";
 import { cacheService } from "./cache.service.js";
 
 const generateUniqueShortId = async (): Promise<string> => {
@@ -78,14 +79,20 @@ const getActiveUrlFilter = (shortId: string) => ({
 });
 
 const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
-  const cachedOriginalUrl = await cacheService.getRedirectUrl(shortId);
+  const cachedRedirect = await cacheService.getRedirectUrl(shortId);
 
-  if (cachedOriginalUrl) {
+  if (cachedRedirect) {
+    if (isExpiredDate(cachedRedirect.expiresAt)) {
+      await cacheService.deleteRedirectUrl(shortId);
+
+      throw new AppError(en.URL.EXPIRED, EHttpStatusCode.GONE);
+    }
+
     void UrlModel.updateOne(getActiveUrlFilter(shortId), {
       $inc: { clicks: 1 },
     });
 
-    return { originalUrl: cachedOriginalUrl };
+    return { originalUrl: cachedRedirect.originalUrl };
   }
 
   const url = await UrlModel.findOneAndUpdate(
@@ -115,7 +122,10 @@ const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
   if (redirectCacheTtl > 0) {
     await cacheService.setRedirectUrl(
       shortId,
-      url.originalUrl,
+      {
+        originalUrl: url.originalUrl,
+        expiresAt: url.expiresAt?.toISOString()
+      },
       redirectCacheTtl,
     );
   }
