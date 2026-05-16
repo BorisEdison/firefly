@@ -124,7 +124,7 @@ const redirectUrl = async (shortId: string): Promise<IRedirectUrlResponse> => {
       shortId,
       {
         originalUrl: url.originalUrl,
-        expiresAt: url.expiresAt?.toISOString()
+        expiresAt: url.expiresAt?.toISOString(),
       },
       redirectCacheTtl,
     );
