@@ -1,4 +1,4 @@
-import { strict } from "node:assert";
+import { ParamsDictionary } from "express-serve-static-core";
 
 export interface ICreateShortUrlRequestBody {
   url: string;
@@ -24,4 +24,8 @@ export interface IUrlAnalyticsResponse {
   clicks: number;
   createdAt: Date;
   expiresAt?: Date;
+}
+
+export interface IShortIdRequestParams extends ParamsDictionary {
+  shortId: string;
 }

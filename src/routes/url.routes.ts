@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { urlController } from "../controllers/url.controller.js";
-import { validateCreateShortUrlRequest } from "../middlewares/url-validation.middleware.js";
+import {
+  validateCreateShortUrlRequest,
+  validateShortIdParam,
+} from "../middlewares/url-validation.middleware.js";
 import { createShortUrlRateLimiter } from "../config/rate-limit.config.js";
 import { ROUTE_CONSTANTS } from "../constants/route.constants.js";
 
@@ -13,6 +16,10 @@ router.post(
   urlController.createShortUrl,
 );
 
-router.get(ROUTE_CONSTANTS.URLS.STATS, urlController.getUrlAnalytics);
+router.get(
+  ROUTE_CONSTANTS.URLS.STATS,
+  validateShortIdParam,
+  urlController.getUrlAnalytics,
+);
 
 export default router;
