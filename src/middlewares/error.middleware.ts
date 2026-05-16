@@ -4,6 +4,7 @@ import { EHttpStatusCode } from "../enums/http-status.enum.js";
 import { en } from "../locales/en.js";
 import { IApiResponse } from "../interfaces/api-response.interface.js";
 import { AppError } from "../utils/app-error.js";
+import { sendErrorResponse } from "../utils/api-response.util.js";
 
 const errorMiddleware: ErrorRequestHandler = (
   err: Error,
@@ -14,18 +15,16 @@ const errorMiddleware: ErrorRequestHandler = (
   console.log("[ERROR]", err);
 
   if (err instanceof AppError) {
-    res.status(err.statusCode).json({
-      success: false,
-      message: err.message,
-    });
+    sendErrorResponse(res, err.statusCode, err.message);
 
     return;
   }
 
-  res.status(EHttpStatusCode.INTERNAL_SERVER_ERROR).json({
-    success: false,
-    message: err.message || en.ERROR.INTERNAL_SERVER_ERROR,
-  });
+  sendErrorResponse(
+    res,
+    EHttpStatusCode.INTERNAL_SERVER_ERROR,
+    en.ERROR.INTERNAL_SERVER_ERROR,
+  );
 };
 
 export default errorMiddleware;

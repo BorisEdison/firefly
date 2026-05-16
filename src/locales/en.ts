@@ -26,6 +26,10 @@ export const en = {
     CUSTOM_ALIAS_LENGTH_INVALID:
       "Custom alias must be between 3 and 30 characters",
     CUSTOM_ALIAS_RESERVED: "This custom alias is reserved",
+    INVALID_SHORT_ID:
+      "Short ID can only contain letters, numbers, hyphens, and underscores",
+    SHORT_ID_LENGTH_INVALID: 
+      "Short ID must be between 3 and 30 characters",
     INVALID_EXPIRY_DATE: "Expiry date must be a valid date",
     EXPIRY_DATE_IN_PAST: "Expiry date must be in the future",
     SHORT_ID_GENERATION_FAILED:

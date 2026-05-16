@@ -4,51 +4,51 @@
     {
       "label": "Docker Dev: Up",
       "type": "shell",
-      "command": "docker compose -f docker-compose.dev.yml up --build",
+      "command": "npm run docker:dev",
       "group": "build",
       "problemMatcher": []
     },
     {
       "label": "Docker Dev: Down",
       "type": "shell",
-      "command": "docker compose -f docker-compose.dev.yml down",
+      "command": "npm run docker:dev:down",
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker Dev: Logs API",
+      "type": "shell",
+      "command": "npm run docker:dev:logs",
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker Dev: Reset Volumes",
+      "type": "shell",
+      "command": "npm run docker:dev:reset",
       "problemMatcher": []
     },
     {
       "label": "Docker Prod: Up",
       "type": "shell",
-      "command": "docker compose up --build",
+      "command": "npm run docker:prod",
       "group": "build",
       "problemMatcher": []
     },
     {
       "label": "Docker Prod: Down",
       "type": "shell",
-      "command": "docker compose down",
-      "problemMatcher": []
-    },
-    {
-      "label": "Docker Dev: Logs API",
-      "type": "shell",
-      "command": "docker compose -f docker-compose-dev.yml logs -f api",
+      "command": "npm run docker:prod:down",
       "problemMatcher": []
     },
     {
       "label": "Docker Prod: Logs API",
       "type": "shell",
-      "command": "docker compose logs -f api",
-      "problemMatcher": []
-    },
-    {
-      "label": "Docker Dev: Reset Volumes",
-      "type": "shell",
-      "command": "docker compose -f docker-compose.dev.yml down -v",
+      "command": "npm run docker:prod:logs",
       "problemMatcher": []
     },
     {
       "label": "Docker Prod: Reset Volumes",
       "type": "shell",
-      "command": "docker compose down -v",
+      "command": "npm run docker:prod:reset",
       "problemMatcher": []
     }
   ]

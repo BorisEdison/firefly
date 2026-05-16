@@ -5,10 +5,12 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Server",
-      "program": "${workspaceFolder}/dist/server.js",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--loader", "ts-node/esm"],
+      "program": "${workspaceFolder}/src/server.js",
       "envFile": "${workspaceFolder}/.env",
-      "runtimeArgs": ["--nolazy"],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "restart": true
     }
   ]
 }
