@@ -1,13 +1,14 @@
 import { createClient } from "redis";
 import { en } from "../locales/en.js";
 import { appConfig } from "./app.config.js";
+import { logger } from "../utils/logger.util.js";
 
 export const redisClient = createClient({
   url: appConfig.redisUrl,
 });
 
 redisClient.on("error", (error) => {
-  console.error(`[ERROR] ${en.REDIS.CONNECTION_FAILED}`, error);
+  logger.error(en.REDIS.CONNECTION_FAILED, error);
 });
 
 export const connectRedis = async (): Promise<void> => {
@@ -16,16 +17,16 @@ export const connectRedis = async (): Promise<void> => {
       await redisClient.connect();
     }
 
-    console.log(`[INFO] ${en.REDIS.CONNECTED}`);
+    logger.info(en.REDIS.CONNECTED);
   } catch (error) {
-    console.error(`[ERROR] ${en.REDIS.CONNECTION_FAILED}`, error);
+    logger.error(en.REDIS.CONNECTION_FAILED, error);
   }
 };
 
 export const disconnectRedis = async (): Promise<void> => {
   if (redisClient.isOpen) {
     await redisClient.quit();
-    console.log(`[INFO] ${en.REDIS.DISCONNECTED}`);
+    logger.info(en.REDIS.DISCONNECTED);
   }
 };
 

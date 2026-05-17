@@ -5,6 +5,7 @@ import { en } from "../locales/en.js";
 import { IApiResponse } from "../interfaces/api-response.interface.js";
 import { AppError } from "../utils/app-error.js";
 import { sendErrorResponse } from "../utils/api-response.util.js";
+import { logger } from "../utils/logger.util.js";
 
 const errorMiddleware: ErrorRequestHandler = (
   err: Error,
@@ -12,7 +13,7 @@ const errorMiddleware: ErrorRequestHandler = (
   res: Response<IApiResponse>,
   _next: NextFunction,
 ): void => {
-  console.log("[ERROR]", err);
+  logger.error("Request error", err);
 
   if (err instanceof AppError) {
     sendErrorResponse(res, err.statusCode, err.message);

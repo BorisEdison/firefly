@@ -10,6 +10,7 @@ import {
 import { connectRedis, disconnectRedis } from "./config/redis.config.js";
 import { EServerExitCode, EServerProcess } from "./enums/process.enum.js";
 import { en } from "./locales/en.js";
+import { logger } from "./utils/logger.util.js";
 
 let server: Server;
 
@@ -19,23 +20,23 @@ const shutdown = async (signal: EServerProcess): Promise<void> => {
       ? en.PROCESS.SIGINT_RECEIVED
       : en.PROCESS.SIGTERM_RECEIVED;
 
-  console.log(`[INFO] ${shutdownMessage}`);
+  logger.info(shutdownMessage);
 
   if (!server) {
     process.exit(EServerExitCode.SUCCESS);
   }
 
   server.close(async () => {
-    console.log(`[INFO] ${en.PROCESS.HTTP_SERVER_CLOSED}`);
+    logger.info(en.PROCESS.HTTP_SERVER_CLOSED);
 
     try {
       await disconnectDatabase();
       await disconnectRedis();
 
-      console.log(`[INFO] ${en.PROCESS.SHUTDOWN_COMPLETED}`);
+      logger.info(en.PROCESS.SHUTDOWN_COMPLETED);
       process.exit(EServerExitCode.SUCCESS);
     } catch (error) {
-      console.error(`[ERROR] ${en.PROCESS.SHUTDOWN_ERROR}`, error);
+      logger.error(en.PROCESS.SHUTDOWN_ERROR, error);
       process.exit(EServerExitCode.GENERAL_ERROR);
     }
   });
@@ -46,7 +47,7 @@ const startServer = async (): Promise<void> => {
   await connectRedis();
 
   server = app.listen(appConfig.port, () => {
-    console.log(`[INFO] Server running on port ${appConfig.port}`);
+    logger.info(`Server running on port ${appConfig.port}`);
   });
 };
 
@@ -59,6 +60,6 @@ process.on(EServerProcess.SIGTERM, () => {
 });
 
 startServer().catch((error: unknown) => {
-  console.log(`[ERROR] ${en.PROCESS.STARTUP_FAILED}`, error);
+  logger.error(en.PROCESS.STARTUP_FAILED, error);
   process.exit(EServerExitCode.GENERAL_ERROR);
 });
