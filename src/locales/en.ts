@@ -2,6 +2,16 @@ export const en = {
   SERVER: {
     RUNNING: "Server is running",
   },
+
+  PROCESS: {
+    STARTUP_FAILED: "Application startup failed",
+    SIGINT_RECEIVED: "SIGNINT received. Shutting down gracefully...",
+    SIGTERM_RECEIVED: "SIGTERM received. Shutting down gracefully...",
+    HTTP_SERVER_CLOSED: "HTTP server closed",
+    SHUTDOWN_COMPLETED: "Shutdown completed",
+    SHUTDOWN_ERROR: "Error during shutdown",
+  },
+
   DATABASE: {
     CONNECTED: "MongoDB connected successfully",
     CONNECTION_FAILED: "MongoDB connection failed",
