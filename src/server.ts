@@ -1,5 +1,6 @@
 import "./config/env.config.js";
 
+import { Server } from "node:http";
 import app from "./app.js";
 import { appConfig } from "./config/app.config.js";
 import {
@@ -7,29 +8,38 @@ import {
   disconnectDatabase,
 } from "./config/database.config.js";
 import { connectRedis, disconnectRedis } from "./config/redis.config.js";
-import { Server } from "node:http";
+import { EServerExitCode, EServerProcess } from "./enums/process.enum.js";
+import { en } from "./locales/en.js";
+import { logger } from "./utils/logger.util.js";
 
 let server: Server;
 
-const shutdown = async (signal: string): Promise<void> => {
-  console.log(`[INFO] ${signal} received. Shutting down gracefully...`);
+const shutdown = async (signal: EServerProcess): Promise<void> => {
+  const shutdownMessage =
+    signal === EServerProcess.SIGINT
+      ? en.PROCESS.SIGINT_RECEIVED
+      : en.PROCESS.SIGTERM_RECEIVED;
 
-  if (server) {
-    server.close(async () => {
-      console.log("[INFO] HTTP server closed");
+  logger.info(shutdownMessage);
 
-      try {
-        await disconnectDatabase();
-        await disconnectRedis();
-
-        console.log("[INFO] Shutdown completed");
-        process.exit(0);
-      } catch (error) {
-        console.error("[ERROR] Error during shutdown", error);
-        process.exit(1);
-      }
-    });
+  if (!server) {
+    process.exit(EServerExitCode.SUCCESS);
   }
+
+  server.close(async () => {
+    logger.info(en.PROCESS.HTTP_SERVER_CLOSED);
+
+    try {
+      await disconnectDatabase();
+      await disconnectRedis();
+
+      logger.info(en.PROCESS.SHUTDOWN_COMPLETED);
+      process.exit(EServerExitCode.SUCCESS);
+    } catch (error) {
+      logger.error(en.PROCESS.SHUTDOWN_ERROR, error);
+      process.exit(EServerExitCode.GENERAL_ERROR);
+    }
+  });
 };
 
 const startServer = async (): Promise<void> => {
@@ -37,16 +47,19 @@ const startServer = async (): Promise<void> => {
   await connectRedis();
 
   server = app.listen(appConfig.port, () => {
-    console.log(`[INFO] Server running on port ${appConfig.port}`);
+    logger.info(`Server running on port ${appConfig.port}`);
   });
 };
 
-process.on("SIGINT", () => {
-  void shutdown("SIGINT");
+process.on(EServerProcess.SIGINT, () => {
+  void shutdown(EServerProcess.SIGINT);
 });
 
-process.on("SIGTERM", () => {
-  void shutdown("SIGTERM");
+process.on(EServerProcess.SIGTERM, () => {
+  void shutdown(EServerProcess.SIGTERM);
 });
 
-void startServer();
+startServer().catch((error: unknown) => {
+  logger.error(en.PROCESS.STARTUP_FAILED, error);
+  process.exit(EServerExitCode.GENERAL_ERROR);
+});
